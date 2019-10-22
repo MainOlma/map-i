@@ -1,0 +1,25 @@
+body {
+  background: lightblue;
+}
+
+.update {
+  fill: #8a8a8a;
+}
+
+.tooltip {
+  position: absolute;
+  text-align: center;
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 10px;
+  background: rgba(227, 227, 227, 0.5);
+  border-radius: 2px;
+  pointer-events: none;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+}
+
+path {
+  paint-order: stroke;
+}
+
+/*# sourceMappingURL=/style.97fcb138.css.map */
