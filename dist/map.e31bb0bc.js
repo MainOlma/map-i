@@ -33041,20 +33041,18 @@ var drawMap = function drawMap() {
   var width = 1200 - margin.left - margin.right;
   var height = 600 - margin.top - margin.bottom;
   var svg = d3.select("#chart").append("svg").attr("width", width).attr("height", height).append('g').attr('class', 'map');
-  var projection = d3.geoAlbers().rotate([-105, 0]).center([-10, 65]).parallels([52, 64]).scale(800).translate([width / 2, height / 2]); //const projection = d3.geoMercator();
-
-  var path = d3.geoPath().projection(projection); //var projection = d3.geoMercator().scale(100);
-
-  svg.append("g").attr("class", "countries").selectAll("path").data(topojson.feature(_rus.default, _rus.default.objects.russia).features) //.data(geo.features)
-  .join("path").attr("d", path).attr("id", function (d) {
+  var projection = d3.geoAlbers().rotate([-105, 0]).center([-10, 65]).parallels([52, 64]).scale(800).translate([width / 2, height / 2]);
+  var path = d3.geoPath().projection(projection);
+  svg.append("g").attr("class", "countries").selectAll("path").data(topojson.feature(_rus.default, _rus.default.objects.russia).features).join("path").attr("id", function (d) {
     return d.properties.iso_3166_2;
-  }).attr("class", "country enter").style("stroke-opacity", 0.4).style("stroke", "white");
+  }).attr("d", path).attr("class", "country enter").style("stroke-opacity", 0.4).style("stroke", "white");
   d3.selectAll("path").on("mouseover", function (d) {
-    d3.select(this).transition().duration(300).style("stroke-opacity", 1);
+    this.parentNode.appendChild(this);
+    d3.select(this).style("stroke-opacity", 1);
     div.transition().duration(300).style("opacity", 1);
     div.text(d.name + ' ' + d.value).style("left", d3.event.x + "px").style("top", d3.event.y + "px");
   }).on("mouseout", function () {
-    d3.select(this).transition().duration(300).style("stroke-opacity", 0.4);
+    d3.select(this).style("stroke-opacity", 0.4);
     div.transition().duration(300).style("opacity", 0);
   }).on("click", clicked);
 
@@ -33095,12 +33093,13 @@ var updateData = function updateData(upddata) {
   var data = d3.csvParse(upddata);
   var columns = data.columns;
   d3.csv(_region.default).then(function (alias) {
-    var newdata = data.map(function (el) {
+    var newdata = data.map(function (el, i) {
       var iso = alias.find(function (region) {
         return region['regAliasTheConstitutionalName'].toLowerCase() == el[columns[0]].toLowerCase() || region['regAliasDatawrapper'].toLowerCase() == el[columns[0]].toLowerCase() || region['regAliasDuckConsulting'].toLowerCase() == el[columns[0]].toLowerCase() || region['regKmpny'].toLowerCase() == el[columns[0]].toLowerCase();
       });
       if (!iso) iso = {};
       return {
+        id: i,
         iso: iso.regAliasISOCode,
         value: el[columns[1]],
         name: el[columns[0]]
@@ -33113,12 +33112,13 @@ var updateData = function updateData(upddata) {
 
 var updateMap = function updateMap(data) {
   var t = d3.transition().duration(750);
-  var paths = d3.selectAll("path").data(topojson.feature(_rus.default, _rus.default.objects.russia).features.map(function (d) {
+  var paths = d3.selectAll("path").data(topojson.feature(_rus.default, _rus.default.objects.russia).features.map(function (d, i) {
     var tmp = data.find(function (e) {
       return e.iso == d.properties.iso_3166_2;
     });
     if (!tmp) tmp = {};
     return {
+      id: i,
       name: tmp.name,
       value: tmp.value,
       iso: d.properties.iso_3166_2,
@@ -33182,7 +33182,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54972" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54549" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

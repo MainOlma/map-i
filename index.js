@@ -38,28 +38,24 @@ const drawMap = () => {
         .parallels([52, 64])
         .scale(800)
         .translate([width / 2, height / 2]);
-    //const projection = d3.geoMercator();
 
     const path = d3.geoPath().projection(projection);
-
-    //var projection = d3.geoMercator().scale(100);
-
 
     svg.append("g")
         .attr("class", "countries")
         .selectAll("path")
         .data(topojson.feature(map, map.objects.russia).features)
-        //.data(geo.features)
         .join("path")
-        .attr("d", path)
         .attr("id",d => d.properties.iso_3166_2)
+        .attr("d", path)
         .attr("class","country enter")
         .style("stroke-opacity", 0.4)
         .style("stroke", "white");
 
     d3.selectAll("path")
         .on("mouseover", function(d) {
-            d3.select(this).transition().duration(300).style("stroke-opacity", 1) ;
+            this.parentNode.appendChild(this);
+            d3.select(this).style("stroke-opacity", 1) ;
             div.transition().duration(300)
                 .style("opacity", 1)
             div.text(d.name + ' ' +d.value)
@@ -68,7 +64,7 @@ const drawMap = () => {
         })
         .on("mouseout", function() {
             d3.select(this)
-                .transition().duration(300)
+
                 .style("stroke-opacity", 0.4);
             div.transition().duration(300)
                 .style("opacity", 0);
@@ -112,14 +108,12 @@ const initData = data =>{
     })
 }
 
-
-
 const updateData = upddata => {
     let data = d3.csvParse(upddata)
     const columns = data.columns
 
     d3.csv(alias).then(alias => {
-        let newdata = data.map(el => {
+        let newdata = data.map((el,i) => {
             let iso = alias.find(region =>
                 (region['regAliasTheConstitutionalName'].toLowerCase() == el[columns[0]].toLowerCase()
                     || region['regAliasDatawrapper'].toLowerCase() == el[columns[0]].toLowerCase()
@@ -130,6 +124,7 @@ const updateData = upddata => {
 
             if (!iso) iso = {}
             return {
+                id:i,
                 iso: iso.regAliasISOCode,
                 value: el[columns[1]],
                 name: el[columns[0]]
@@ -138,7 +133,6 @@ const updateData = upddata => {
         console.log("NEW DATA: ", newdata)
         updateMap(newdata)
     })
-
 }
 
 const updateMap = data => {
@@ -147,10 +141,11 @@ const updateMap = data => {
 
     const paths = d3.selectAll("path")
         .data(topojson.feature(map, map.objects.russia).features
-            .map(d => {
+            .map((d,i) => {
                 let tmp = data.find(e => e.iso == d.properties.iso_3166_2)
                 if (!tmp) tmp={}
                 return {
+                    id:i,
                     name:tmp.name,
                     value: tmp.value,
                     iso:d.properties.iso_3166_2,
@@ -185,8 +180,6 @@ const drawTable = () => {
     //console.log(tbl);
     divTable.innerHTML = tbl;
 }
-
-
 
 drawMap()
 initData(data)
