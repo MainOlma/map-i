@@ -1,12 +1,12 @@
-import * as d3 from "d3";
+import * as d3 from "d3"
 import olma from './olma.json'
 import data from './data.csv'
 import alias from './region.csv'
 import * as topojson from "topojson"
 
-let centered;
+let centered
 const locale = d3.formatLocale({decimal: ","})
-const commaFormat = locale.format(',.2f');
+const commaFormat = locale.format(',.2f')
 
 const div = d3.select("body").append("div")
     .attr("class", "tooltip")
@@ -48,13 +48,11 @@ const drawMap = () => {
         .attr("id",d => d.properties.iso_3166_2)
         .attr("d", path)
         .attr("class","country enter")
-        .style("stroke-opacity", 0.4)
-        .style("stroke", "white");
 
     d3.selectAll("path")
         .on("mouseover", function(d) {
             this.parentNode.appendChild(this);
-            d3.select(this).style("stroke-opacity", 1) ;
+            d3.select(this).classed("hovered",true) ;
             div.transition().duration(300)
                 .style("opacity", 1)
             div.style("left", (d3.event.x) + "px")
@@ -63,12 +61,15 @@ const drawMap = () => {
             div_name.text(d.name)
         })
         .on("mouseout", function() {
-            d3.select(this)
+            d3.select(this).classed("hovered",false)
 
-                .style("stroke-opacity", 0.4);
             div.transition().duration(300)
                 .style("opacity", 0);
         })
+        .on("mousemove",()=>{
+            div.style("left", (d3.event.x) + "px")
+                .style("top", (d3.event.y) + "px");
+    })
         .on("click", clicked);
 
     function clicked(d) {

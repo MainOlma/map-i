@@ -7,6 +7,8 @@ body{
 .update{
   fill:#8a8a8a;
 }
+#chart{position: fixed}
+#content{margin-top: 100vh;}
 
 .tooltip {
   position: absolute;
@@ -30,6 +32,13 @@ body{
 
 path{
   paint-order: stroke;
+  stroke:white;
+  stroke-width: 1px;
+  stroke-opacity: 1;
+  &.hovered{
+    stroke: black;
+    stroke-width: 1.5px;
+  }
 }
 
 .ui.table td {
