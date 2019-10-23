@@ -86,14 +86,15 @@ export function legend({
             .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
             .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
             .tickSize(tickSize)
+            .tickPadding(6)
             .tickValues(tickValues))
         .call(g => g.selectAll(".tick line").attr("y1", marginTop + marginBottom - height))
         .call(g => g.select(".domain").remove())
         .call(g => g.append("text")
-            .attr("y", marginTop + marginBottom - height - 6)
+            .attr("y", marginTop + marginBottom - height - 12)
             .attr("fill", "currentColor")
             .attr("text-anchor", "start")
-            .attr("font-weight", "bold")
+            .attr("class", "title")
             .text(title));
 
     return svg.node();

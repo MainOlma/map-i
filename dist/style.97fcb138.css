@@ -10,6 +10,15 @@ body {
   position: fixed;
   top: 0;
 }
+#chart .tick lline {
+  stroke-width: 1px;
+}
+#chart .tick text {
+  font-size: 12px;
+}
+#chart text.title {
+  font-size: 20px;
+}
 
 #content {
   margin-top: 100vh;

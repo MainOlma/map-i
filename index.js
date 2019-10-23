@@ -11,6 +11,7 @@ import {legend} from "./d3/color-legend"
 let centered
 const locale = d3.formatLocale({decimal: ","})
 const commaFormat = locale.format(',.2f')
+const commaLegendFormat = locale.format(',.1f')
 
 const div = d3.select("#chart").append("div")
     .attr("class", "tooltip")
@@ -25,7 +26,7 @@ const color = d3.scaleSequential(d3.interpolateGreens)
 const drawLegend = title =>{
     d3.select('g.map').append("g")
         .attr("transform", "translate(115,480)")
-        .append(() => legend({color, title: title, width:280 , tickFormat: commaFormat,ticks: 6}));
+        .append(() => legend({color, title: title, width:280 , tickFormat: commaLegendFormat,ticks: 6, tickSize:0}));
 }
 
 const drawMap = () => {
