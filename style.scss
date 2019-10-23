@@ -12,8 +12,9 @@ body{
   top:0;
 
   .tick{
-    lline{
-      stroke-width: 1px;
+    line{
+      stroke-width: 0.5px;
+      //stroke-opacity: 0.5;
     }
     text{
       font-size: 12px;
