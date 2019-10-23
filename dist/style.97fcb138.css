@@ -8,6 +8,7 @@ body {
 
 #chart {
   position: fixed;
+  top: 0;
 }
 
 #content {
@@ -20,7 +21,7 @@ body {
   display: inline-block;
   padding: 3px 8px;
   font-size: 10px;
-  background: rgba(248, 252, 246, 0.4);
+  background: rgba(248, 252, 246, 0.5);
   border-radius: 2px;
   pointer-events: none;
 }
@@ -29,8 +30,11 @@ body {
   font-family: Arial;
   font-style: normal;
   font-weight: bold;
-  font-size: 24.5px;
-  line-height: 120%;
+  font-size: 32px;
+  line-height: 110%;
+}
+.tooltip p {
+  font-size: 20px;
 }
 
 path {

@@ -8,7 +8,7 @@ let centered
 const locale = d3.formatLocale({decimal: ","})
 const commaFormat = locale.format(',.2f')
 
-const div = d3.select("body").append("div")
+const div = d3.select("#chart").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
@@ -55,21 +55,18 @@ const drawMap = () => {
             d3.select(this).classed("hovered",true) ;
             div.transition().duration(300)
                 .style("opacity", 1)
-            div.style("left", (d3.event.x) + "px")
-                .style("top", (d3.event.y) + "px");
             div_value.text(commaFormat(d.value))
             div_name.text(d.name)
         })
         .on("mouseout", function() {
             d3.select(this).classed("hovered",false)
-
             div.transition().duration(300)
                 .style("opacity", 0);
         })
         .on("mousemove",()=>{
-            div.style("left", (d3.event.x) + "px")
-                .style("top", (d3.event.y) + "px");
-    })
+            div.style("left", (d3.event.x)+10 + "px")
+                .style("top", (d3.event.y)+15 + "px");
+        })
         .on("click", clicked);
 
     function clicked(d) {

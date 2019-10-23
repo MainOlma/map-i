@@ -7,7 +7,10 @@ body{
 .update{
   fill:#8a8a8a;
 }
-#chart{position: fixed}
+#chart{
+  position: fixed;
+  top:0;
+}
 #content{margin-top: 100vh;}
 
 .tooltip {
@@ -16,7 +19,7 @@ body{
   display: inline-block;
   padding: 3px 8px;
   font-size: 10px;
-  background: rgba(248, 252, 246, 0.4);
+  background: rgba(248, 252, 246, 0.5);
   border-radius: 2px;
   pointer-events: none;
   h3{
@@ -24,8 +27,11 @@ body{
     font-family: Arial;
     font-style: normal;
     font-weight: bold;
-    font-size: 24.5px;
-    line-height: 120%;
+    font-size: 32px;
+    line-height: 110%;
+  }
+  p{
+    font-size: 20px;
   }
 
 }
