@@ -3,6 +3,10 @@ import olma from './olma.json'
 import data from './data.csv'
 import alias from './region.csv'
 import * as topojson from "topojson"
+//import legend from 'd3-svg-legend'
+import {legend} from "./d3/color-legend"
+
+
 
 let centered
 const locale = d3.formatLocale({decimal: ","})
@@ -16,7 +20,13 @@ const div_value = div.append('h3')
 const div_name = div.append('p')
 
 const color = d3.scaleSequential(d3.interpolateGreens)
-    .domain([0, 0.6]);
+    .domain([0, 1]);
+
+const drawLegend = title =>{
+    d3.select('g.map').append("g")
+        .attr("transform", "translate(115,480)")
+        .append(() => legend({color, title: title, width:280 , tickFormat: commaFormat,ticks: 6}));
+}
 
 const drawMap = () => {
     const margin = {top: 0, right: 0, bottom: 0, left: 0};
@@ -30,6 +40,8 @@ const drawMap = () => {
         .attr("viewBox",'0 0 ' + width + ' '+height)
         .append('g')
         .attr('class', 'map');
+
+
 
     const projection = d3.geoAlbers()
         .rotate([-105, 0])
@@ -101,6 +113,8 @@ const updateData = upddata => {
     let data = d3.csvParse(upddata)
     const columns = data.columns
 
+
+
     d3.csv(alias).then(alias => {
         let newdata = data.map((el,i) => {
             let iso = alias.find(region =>
@@ -120,6 +134,9 @@ const updateData = upddata => {
             }
         })
         //console.log("NEW DATA: ", newdata)
+        const max = d3.max(newdata.map(s=>s.value))
+        color.domain([0,max])
+        drawLegend(data.columns[1])
         updateMap(newdata)
     })
 }
@@ -173,4 +190,6 @@ drawMap()
 d3.text(data).then( data => {
     drawTable(data)
     updateData(data)
-})
+
+});
+
