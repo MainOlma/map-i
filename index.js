@@ -1,21 +1,19 @@
 import * as d3 from "d3";
-import map from './rus.json'
-//import olma from './olma.json'
+import olma from './olma.json'
 import data from './data.csv'
 import alias from './region.csv'
 import * as topojson from "topojson"
 
-const textArea = document.getElementById('data');
-textArea.addEventListener('input', () => {
-    drawTable()
-    updateData(textArea.value)
-})
-
 let centered;
+const locale = d3.formatLocale({decimal: ","})
+const commaFormat = locale.format(',.2f');
 
 const div = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
+
+const div_value = div.append('h3')
+const div_name = div.append('p')
 
 const color = d3.scaleSequential(d3.interpolateGreens)
     .domain([0, 0.6]);
@@ -27,8 +25,9 @@ const drawMap = () => {
 
     const svg = d3.select("#chart")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("width", '100vw')
+        .attr("height", '100vh')
+        .attr("viewBox",'0 0 ' + width + ' '+height)
         .append('g')
         .attr('class', 'map');
 
@@ -44,7 +43,7 @@ const drawMap = () => {
     svg.append("g")
         .attr("class", "countries")
         .selectAll("path")
-        .data(topojson.feature(map, map.objects.russia).features)
+        .data(topojson.feature(olma, olma.objects.russia).features)
         .join("path")
         .attr("id",d => d.properties.iso_3166_2)
         .attr("d", path)
@@ -58,9 +57,10 @@ const drawMap = () => {
             d3.select(this).style("stroke-opacity", 1) ;
             div.transition().duration(300)
                 .style("opacity", 1)
-            div.text(d.name + ' ' +d.value)
-                .style("left", (d3.event.x) + "px")
+            div.style("left", (d3.event.x) + "px")
                 .style("top", (d3.event.y) + "px");
+            div_value.text(commaFormat(d.value))
+            div_name.text(d.name)
         })
         .on("mouseout", function() {
             d3.select(this)
@@ -99,15 +99,6 @@ const drawMap = () => {
     return svg.node();
 }
 
-
-const initData = data =>{
-    d3.text(data).then( data => {
-        textArea.value=data
-        drawTable()
-        updateData(textArea.value)
-    })
-}
-
 const updateData = upddata => {
     let data = d3.csvParse(upddata)
     const columns = data.columns
@@ -130,7 +121,7 @@ const updateData = upddata => {
                 name: el[columns[0]]
             }
         })
-        console.log("NEW DATA: ", newdata)
+        //console.log("NEW DATA: ", newdata)
         updateMap(newdata)
     })
 }
@@ -140,7 +131,7 @@ const updateMap = data => {
         .duration(750);
 
     const paths = d3.selectAll("path")
-        .data(topojson.feature(map, map.objects.russia).features
+        .data(topojson.feature(olma, olma.objects.russia).features
             .map((d,i) => {
                 let tmp = data.find(e => e.iso == d.properties.iso_3166_2)
                 if (!tmp) tmp={}
@@ -163,10 +154,9 @@ const updateMap = data => {
         .style("fill", (d) => color(d.value))
 }
 
-
-const drawTable = () => {
+const drawTable = data => {
     let tbl = "<table class=' ui celled table unstackable striped '><tbody>"
-    const lines = document.getElementById("data").value.split("\n");
+    const lines = data.split("\n");
     for (let i = 0; i < lines.length; i++) {
         tbl = tbl + "<tr>"
         let items = lines[i].split(",");
@@ -182,4 +172,7 @@ const drawTable = () => {
 }
 
 drawMap()
-initData(data)
+d3.text(data).then( data => {
+    drawTable(data)
+    updateData(data)
+})
