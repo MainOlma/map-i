@@ -42,8 +42,6 @@ const drawMap = () => {
         .append('g')
         .attr('class', 'map');
 
-
-
     const projection = d3.geoAlbers()
         .rotate([-105, 0])
         .center([-10, 65])
@@ -56,32 +54,13 @@ const drawMap = () => {
     svg.append("g")
         .attr("class", "countries")
         .selectAll("path")
-        .data(topojson.feature(olma, olma.objects.russia).features)
+        .data(topojson.feature(olma, olma.objects.russia).features, d=>d.properties)
         .join("path")
         .attr("id",d => d.properties.iso_3166_2)
         .attr("d", path)
         .attr("class","country enter")
 
-    d3.selectAll("path")
-        .on("mouseover", function(d) {
-            this.parentNode.appendChild(this);
-            d3.select(this).classed("hovered",true) ;
-            div.transition().duration(300)
-                .style("opacity", 1)
-            div_value.text(commaFormat(d.value))
-            div_name.text(d.name)
-        })
-        .on("mouseout", function() {
-            d3.select(this).classed("hovered",false)
-            div.transition().duration(300)
-                .style("opacity", 0);
-        })
-        .on("mousemove",()=>{
-            div.style("left", (d3.event.x)+10 + "px")
-                .style("top", (d3.event.y)+15 + "px");
-        })
-        .on("click", clicked);
-
+    d3.select('.countries').selectAll("path").on("click", clicked);
     function clicked(d) {
         var x, y, k;
 
@@ -114,8 +93,6 @@ const updateData = upddata => {
     let data = d3.csvParse(upddata)
     const columns = data.columns
 
-
-
     d3.csv(alias).then(alias => {
         let newdata = data.map((el,i) => {
             let iso = alias.find(region =>
@@ -134,7 +111,6 @@ const updateData = upddata => {
                 name: el[columns[0]]
             }
         })
-        //console.log("NEW DATA: ", newdata)
         const max = d3.max(newdata.map(s=>s.value))
         color.domain([0,max])
         drawLegend(data.columns[1])
@@ -146,16 +122,16 @@ const updateMap = data => {
     const t = d3.transition()
         .duration(750);
 
-    const paths = d3.selectAll("path")
+    const paths = d3.select('.countries').selectAll("path")
         .data(topojson.feature(olma, olma.objects.russia).features
-            .map((d,i) => {
+            .map((d, i) => {
                 let tmp = data.find(e => e.iso == d.properties.iso_3166_2)
-                if (!tmp) tmp={}
+                if (!tmp) tmp = {}
                 return {
-                    id:i,
-                    name:tmp.name,
+                    id: i,
+                    name: tmp.name,
                     value: tmp.value,
-                    iso:d.properties.iso_3166_2,
+                    iso: d.properties.iso_3166_2,
                     feature: d
                 }
             }))
@@ -168,6 +144,26 @@ const updateMap = data => {
     paths.attr("class", "update country")
         .transition(t)
         .style("fill", (d) => color(d.value))
+
+    d3.select('.countries').selectAll("path")
+        .on("mouseover", function (d) {
+            this.parentNode.appendChild(this);
+            d3.select(this).classed("hovered", true);
+            div.transition().duration(300)
+                .style("opacity", 1)
+            div_value.text(commaFormat(d.value))
+            div_name.text(d.name)
+        })
+        .on("mouseout", function () {
+            d3.select(this).classed("hovered", false)
+            div.transition().duration(300)
+                .style("opacity", 0);
+        })
+        .on("mousemove", () => {
+            div.style("left", (d3.event.x) + 10 + "px")
+                .style("top", (d3.event.y) + 15 + "px");
+        })
+
 }
 
 const drawTable = data => {
@@ -187,8 +183,9 @@ const drawTable = data => {
     divTable.innerHTML = tbl;
 }
 
-drawMap()
+
 d3.text(data).then( data => {
+    drawMap()
     drawTable(data)
     updateData(data)
 

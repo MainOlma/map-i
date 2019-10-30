@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html",
+    "prod": "rm -rf prod && parcel build index.html --out-dir prod --no-source-maps",
     "predeploy": "rm -rf dist && parcel build index.html --public-url /map-i/",
     "deploy": "gh-pages -d dist"
   },
